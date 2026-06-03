@@ -1,0 +1,6 @@
+@Toshkent_Bekobod_Taksi_HostAddress = http://localhost:5161
+
+GET {{Toshkent_Bekobod_Taksi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
