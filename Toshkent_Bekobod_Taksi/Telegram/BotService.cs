@@ -82,7 +82,7 @@ public class BotService
 
         var msg = $"🇺🇿 TOSHKENT – BEKOBOD TAKSI | Admin panel\n\n" +
                   $"👋 Xush kelibsiz! Bugungi tizim ko'rsatkichlari:\n\n" +
-                  $"📊 Jami buyurtmalar: {stats.Values.Sum()} ta\n" +
+                  $"📊 Jami buyurtmalar: {stats.Sum(s => s.TotalOrders)} ta\n" +
                   $"🚗 Faol haydovchilar: {driverStats.Count} ta\n\n" +
                   $"Quyidagi tugmalar orqali statistikani kuzatishingiz mumkin:";
 
@@ -288,8 +288,18 @@ public class BotService
         }
 
         var text = "📊 OYLIK STATISTIKA\n─────────────────\n\n";
-        foreach (var (month, count) in stats)
-            text += $"{month}: {count} ta buyurtma\n";
+        foreach (var s in stats)
+        {
+            text += $"📅 {s.Month} — {s.TotalOrders} ta buyurtma\n";
+            int i = 1;
+            foreach (var o in s.Orders)
+            {
+                var date = o.CreatedAt.ToString("dd.MM HH:mm");
+                text += $"  {i}. {o.UserName} — {o.PickupLocation} → {o.DropoffLocation} ({date})\n";
+                i++;
+            }
+            text += "\n";
+        }
 
         var keyboard = new ReplyKeyboardMarkup(new[]
         {
@@ -313,7 +323,15 @@ public class BotService
         foreach (var d in stats)
         {
             var name = !string.IsNullOrEmpty(d.Username) ? $"@{d.Username}" : d.Name;
-            text += $"{name}: {d.TotalOrders} ta buyurtma\n";
+            text += $"👤 {name} — {d.TotalOrders} ta buyurtma\n";
+            int i = 1;
+            foreach (var o in d.Orders)
+            {
+                var date = o.AcceptedAt?.ToString("dd.MM HH:mm") ?? "—";
+                text += $"  {i}. {o.UserName} — {o.PickupLocation} → {o.DropoffLocation} ({date})\n";
+                i++;
+            }
+            text += "\n";
         }
 
         var keyboard = new ReplyKeyboardMarkup(new[]

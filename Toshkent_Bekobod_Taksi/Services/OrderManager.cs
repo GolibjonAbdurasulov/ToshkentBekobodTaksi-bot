@@ -61,12 +61,18 @@ public class OrderManager
 
     public List<Order> GetAllOrders() => _orders.Values.OrderByDescending(o => o.CreatedAt).ToList();
 
-    public Dictionary<string, int> GetMonthlyStats()
+    public List<MonthlyStat> GetMonthlyStats()
     {
         return _orders.Values
             .GroupBy(o => $"{o.CreatedAt.Year}-{o.CreatedAt.Month:D2}")
             .OrderBy(g => g.Key)
-            .ToDictionary(g => g.Key, g => g.Count());
+            .Select(g => new MonthlyStat
+            {
+                Month = g.Key,
+                TotalOrders = g.Count(),
+                Orders = g.OrderByDescending(o => o.CreatedAt).ToList()
+            })
+            .ToList();
     }
 
     public List<DriverStat> GetDriverStats()
@@ -83,7 +89,8 @@ public class OrderManager
                     Name = first.DriverName ?? "Noma'lum",
                     Username = first.DriverUsername,
                     TotalOrders = g.Count(),
-                    LastOrderAt = g.Max(o => o.AcceptedAt)
+                    LastOrderAt = g.Max(o => o.AcceptedAt),
+                    Orders = g.OrderByDescending(o => o.AcceptedAt).ToList()
                 };
             })
             .OrderByDescending(d => d.TotalOrders)
@@ -117,6 +124,13 @@ public class OrderManager
     }
 }
 
+public class MonthlyStat
+{
+    public string Month { get; set; } = string.Empty;
+    public int TotalOrders { get; set; }
+    public List<Order> Orders { get; set; } = new();
+}
+
 public class DriverStat
 {
     public long TelegramId { get; set; }
@@ -124,4 +138,5 @@ public class DriverStat
     public string? Username { get; set; }
     public int TotalOrders { get; set; }
     public DateTime? LastOrderAt { get; set; }
+    public List<Order> Orders { get; set; } = new();
 }
