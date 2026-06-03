@@ -13,6 +13,4 @@ COPY --from=build /out .
 
 EXPOSE 80
 
-ENV ASPNETCORE_URLS=http://0.0.0.0:\${PORT:-80}
-
 CMD ["dotnet", "Toshkent_Bekobod_Taksi.dll"]
