@@ -12,12 +12,14 @@ public class BotService
     private readonly OrderManager _orders;
     private readonly UserStore _users;
     private readonly long _groupId;
+    private readonly long _viewerGroupId;
     private readonly long _adminId;
 
     public BotService(IConfiguration config, OrderManager orders, UserStore users)
     {
         var token = config["TelegramBot:Token"] ?? throw new Exception("Token missing");
         _groupId = long.Parse(config["TelegramBot:GroupId"] ?? throw new Exception("GroupId missing"));
+        _viewerGroupId = long.Parse(config["TelegramBot:ViewerGroupId"] ?? throw new Exception("ViewerGroupId missing"));
         _adminId = long.Parse(config["TelegramBot:AdminId"] ?? throw new Exception("AdminId missing"));
         _bot = new TelegramBotClient(token);
         _orders = orders;
@@ -389,9 +391,39 @@ public class BotService
                     return;
                 }
 
-                await _bot.AnswerCallbackQueryAsync(cb.Id,
-                    $"👤 {order.UserName} | 📞 {order.Phone} | 📍 {order.PickupLocation} ➡ {order.DropoffLocation} | 👥 {order.PassengerCount} kishi",
-                    showAlert: true);
+                if (order.Status != OrderStatus.Active)
+                {
+                    await _bot.AnswerCallbackQueryAsync(cb.Id, "Bu buyurtma allaqachon qabul qilingan");
+                    return;
+                }
+
+                var driverName = !string.IsNullOrEmpty(cb.From.Username)
+                    ? "@" + cb.From.Username
+                    : cb.From.FirstName ?? "Noma'lum";
+
+                var isFirstViewer = _orders.TryViewOrder(id,
+                    cb.From.Id,
+                    cb.From.Username,
+                    cb.From.FirstName);
+
+                if (isFirstViewer)
+                {
+                    await _bot.AnswerCallbackQueryAsync(cb.Id,
+                        $"👤 {order.UserName}\n📞 {order.Phone}\n📍 {order.PickupLocation} ➡ {order.DropoffLocation}\n👥 {order.PassengerCount} kishi",
+                        showAlert: true);
+                }
+                else
+                {
+                    await _bot.AnswerCallbackQueryAsync(cb.Id,
+                        "Bu buyurtma ma'lumotlari allaqachon boshqa haydovchi tomonidan ko'rilgan",
+                        showAlert: true);
+                }
+
+                await _bot.SendTextMessageAsync(_viewerGroupId,
+                    $"👁 {driverName} buyurtma ma'lumotlarini ko'rdi\n" +
+                    $"🆔 #{order.Id.ToString()[..8]}\n" +
+                    $"📍 {order.PickupLocation} ➡ {order.DropoffLocation}\n" +
+                    $"👥 {order.PassengerCount} kishi");
                 return;
             }
 
@@ -426,6 +458,27 @@ public class BotService
                     $"ℹ️ Mijoz ma'lumotlari faqat haydovchiga ko'rsatilgan.");
 
                 await _bot.AnswerCallbackQueryAsync(cb.Id, "✅ Buyurtma qabul qilindi! Mijoz bilan bog'lanishingiz mumkin.");
+
+                await _bot.SendTextMessageAsync(_viewerGroupId,
+                    $"✅ Buyurtma qabul qilindi\n" +
+                    $"🆔 #{order.Id.ToString()[..8]}\n" +
+                    $"🚗 Haydovchi: {driverName}\n" +
+                    $"📍 {order.PickupLocation} ➡ {order.DropoffLocation}\n" +
+                    $"👥 {order.PassengerCount} kishi");
+
+                int viewerCount = order.ViewedByDrivers.Count;
+                foreach (var viewer in order.ViewedByDrivers)
+                {
+                    var viewerName = !string.IsNullOrEmpty(viewer.Username)
+                        ? "@" + viewer.Username
+                        : viewer.Name ?? "Noma'lum";
+                    await _bot.SendTextMessageAsync(_viewerGroupId,
+                        $"  👁 {viewerName} — {viewer.ViewedAt:HH:mm}");
+                }
+
+                if (viewerCount == 0)
+                    await _bot.SendTextMessageAsync(_viewerGroupId, "  (hech kim ko'rmagan)");
+
                 return;
             }
 

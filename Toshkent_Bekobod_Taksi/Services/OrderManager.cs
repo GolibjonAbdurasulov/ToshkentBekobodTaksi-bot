@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Text.Json;
 using Toshkent_Bekobod_Taksi.Models;
+using System.Text.Json.Serialization;
 
 namespace Toshkent_Bekobod_Taksi.Services;
 
@@ -55,6 +56,27 @@ public class OrderManager
             order.AcceptedAt = DateTime.UtcNow;
             Save();
             return true;
+        }
+        return false;
+    }
+
+    public bool TryViewOrder(Guid id, long driverTelegramId, string? username, string? name)
+    {
+        if (_orders.TryGetValue(id, out var order) && order.Status == OrderStatus.Active)
+        {
+            lock (order)
+            {
+                var isFirst = order.ViewedByDrivers.Count == 0;
+                order.ViewedByDrivers.Add(new DriverViewer
+                {
+                    TelegramId = driverTelegramId,
+                    Username = username,
+                    Name = name,
+                    ViewedAt = DateTime.UtcNow
+                });
+                Save();
+                return isFirst;
+            }
         }
         return false;
     }

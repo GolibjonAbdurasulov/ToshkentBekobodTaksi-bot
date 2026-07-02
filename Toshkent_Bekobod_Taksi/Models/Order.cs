@@ -2,6 +2,14 @@ namespace Toshkent_Bekobod_Taksi.Models;
 
 public enum OrderStatus { Active, Accepted }
 
+public class DriverViewer
+{
+    public long TelegramId { get; set; }
+    public string? Username { get; set; }
+    public string? Name { get; set; }
+    public DateTime ViewedAt { get; set; }
+}
+
 public class Order
 {
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -20,4 +28,6 @@ public class Order
     public string? DriverUsername { get; set; }
     public string? DriverName { get; set; }
     public DateTime? AcceptedAt { get; set; }
+
+    public List<DriverViewer> ViewedByDrivers { get; set; } = new();
 }
