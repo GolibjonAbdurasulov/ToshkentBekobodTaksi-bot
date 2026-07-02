@@ -59,11 +59,12 @@ public class BotService
         var chatId = msg.Chat.Id;
         var text = msg.Text ?? "";
         var contact = msg.Contact;
+        var telegramUsername = msg.From?.Username;
 
         if (chatId == _adminId)
             await HandleAdminMessage(chatId, text);
         else
-            await HandlePassengerMessage(chatId, text, contact);
+            await HandlePassengerMessage(chatId, text, contact, telegramUsername);
     }
 
     private async Task HandleAdminMessage(long chatId, string text)
@@ -97,11 +98,14 @@ public class BotService
         await _bot.SendTextMessageAsync(chatId, msg, replyMarkup: keyboard);
     }
 
-    private async Task HandlePassengerMessage(long chatId, string text, Contact? contact)
+    private async Task HandlePassengerMessage(long chatId, string text, Contact? contact, string? telegramUsername = null)
     {
         if (text == "/start")
         {
             _orders.ClearPendingOrder(chatId);
+
+            var order = _orders.GetOrCreatePendingOrder(chatId);
+            order.UserTelegramUsername = telegramUsername;
 
             if (_users.Exists(chatId))
             {
@@ -347,13 +351,20 @@ public class BotService
 
     private async Task SendOrderToGroup(Order order)
     {
+        var contactLine = $"👤 {order.UserName}";
+        if (!string.IsNullOrEmpty(order.UserTelegramUsername))
+            contactLine += $" | 💬 @{order.UserTelegramUsername}";
+        else
+            contactLine += $" | 🔗 tg://user?id={order.UserChatId}";
+
         var msg = await _bot.SendTextMessageAsync(_groupId,
             $"🚖 YANGI BUYURTMA\n" +
             $"─────────────────\n" +
-            $"👤 Mijoz: {order.UserName}\n" +
-            $"📍 Yo'nalish: {order.PickupLocation} ➡️ {order.DropoffLocation}\n" +
-            $"👥 Yo'lovchilar: {order.PassengerCount} kishi\n" +
-            $"🕐 Vaqt: {order.CreatedAt:HH:mm}\n" +
+            $"{contactLine}\n" +
+            $"📞 {order.Phone}\n" +
+            $"📍 {order.PickupLocation} ➡️ {order.DropoffLocation}\n" +
+            $"👥 {order.PassengerCount} kishi\n" +
+            $"🕐 {order.CreatedAt:HH:mm}\n" +
             $"─────────────────",
             replyMarkup: new InlineKeyboardMarkup(new[]
             {
@@ -404,9 +415,13 @@ public class BotService
 
                 if (result == OrderManager.ViewResult.Ok)
                 {
-                    await _bot.AnswerCallbackQueryAsync(cb.Id,
-                        $"👤 {order.UserName}\n📞 {order.Phone}\n📍 {order.PickupLocation} ➡ {order.DropoffLocation}\n👥 {order.PassengerCount} kishi",
-                        showAlert: true);
+                    var contactLine = $"👤 {order.UserName}\n📞 {order.Phone}";
+                    if (!string.IsNullOrEmpty(order.UserTelegramUsername))
+                        contactLine += $"\n💬 @{order.UserTelegramUsername}";
+                    else
+                        contactLine += $"\n🔗 tg://user?id={order.UserChatId}";
+
+                    await _bot.AnswerCallbackQueryAsync(cb.Id, contactLine, showAlert: true);
 
                     if (isNewViewer)
                     {

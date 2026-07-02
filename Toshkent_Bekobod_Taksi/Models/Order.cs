@@ -15,6 +15,7 @@ public class Order
     public Guid Id { get; set; } = Guid.NewGuid();
     public long UserChatId { get; set; }
     public string UserName { get; set; } = string.Empty;
+    public string? UserTelegramUsername { get; set; }
     public string Phone { get; set; } = string.Empty;
     public string PickupLocation { get; set; } = string.Empty;
     public string DropoffLocation { get; set; } = string.Empty;
