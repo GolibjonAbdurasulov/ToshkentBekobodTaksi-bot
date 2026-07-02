@@ -14,7 +14,51 @@
     "DriverTelegramId": 5146085066,
     "DriverUsername": "G_Abdurasulov",
     "DriverName": "//G\u0027olibjon Abdurasulov",
-    "AcceptedAt": "2026-06-03T03:51:44.5837677Z"
+    "AcceptedAt": "2026-06-03T03:51:44.5837677Z",
+    "ViewedByDrivers": []
+  },
+  {
+    "Id": "484c968b-b8e1-426b-8005-7e5d23f43f6f",
+    "UserChatId": 8272393758,
+    "UserName": "Test",
+    "Phone": "19485428269",
+    "PickupLocation": "Toshkent",
+    "DropoffLocation": "Bekobod",
+    "PassengerCount": 1,
+    "Status": 1,
+    "GroupMessageId": 15,
+    "GroupChatId": -1003951463880,
+    "CreatedAt": "2026-07-02T05:16:19.399852Z",
+    "DriverTelegramId": 5146085066,
+    "DriverUsername": "G_Abdurasulov",
+    "DriverName": "//G\u0027olibjon Abdurasulov",
+    "AcceptedAt": "2026-07-02T05:17:10.9082555Z",
+    "ViewedByDrivers": [
+      {
+        "TelegramId": 5146085066,
+        "Username": "G_Abdurasulov",
+        "Name": "//G\u0027olibjon Abdurasulov",
+        "ViewedAt": "2026-07-02T05:16:42.766834Z"
+      },
+      {
+        "TelegramId": 5146085066,
+        "Username": "G_Abdurasulov",
+        "Name": "//G\u0027olibjon Abdurasulov",
+        "ViewedAt": "2026-07-02T05:16:45.8174899Z"
+      },
+      {
+        "TelegramId": 5146085066,
+        "Username": "G_Abdurasulov",
+        "Name": "//G\u0027olibjon Abdurasulov",
+        "ViewedAt": "2026-07-02T05:16:56.1595338Z"
+      },
+      {
+        "TelegramId": 5146085066,
+        "Username": "G_Abdurasulov",
+        "Name": "//G\u0027olibjon Abdurasulov",
+        "ViewedAt": "2026-07-02T05:17:07.4233975Z"
+      }
+    ]
   },
   {
     "Id": "8fc41abd-b301-437d-a97a-b99512a2613e",
@@ -31,7 +75,8 @@
     "DriverTelegramId": 5146085066,
     "DriverUsername": "G_Abdurasulov",
     "DriverName": "//G\u0027olibjon Abdurasulov",
-    "AcceptedAt": "2026-06-03T06:58:12.6269319Z"
+    "AcceptedAt": "2026-06-03T06:58:12.6269319Z",
+    "ViewedByDrivers": []
   },
   {
     "Id": "8c0ffdcb-c933-4c37-adeb-592a20544198",
@@ -48,6 +93,7 @@
     "DriverTelegramId": 5146085066,
     "DriverUsername": "G_Abdurasulov",
     "DriverName": "//G\u0027olibjon Abdurasulov",
-    "AcceptedAt": "2026-06-03T08:00:54.0494234Z"
+    "AcceptedAt": "2026-06-03T08:00:54.0494234Z",
+    "ViewedByDrivers": []
   }
 ]

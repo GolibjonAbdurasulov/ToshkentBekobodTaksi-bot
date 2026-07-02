@@ -101,7 +101,7 @@ public class BotService
     {
         if (text == "/start")
         {
-            _orders.RemoveUserState(chatId);
+            _orders.ClearPendingOrder(chatId);
 
             if (_users.Exists(chatId))
             {
@@ -233,13 +233,13 @@ public class BotService
                 "📌 Buyurtma raqamingiz haydovchilarga yuborildi. Tez orada siz bilan bog'lanadi.",
                 replyMarkup: doneKeyboard);
 
-            _orders.RemoveUserState(chatId);
+            _orders.ClearPendingOrder(chatId);
             return;
         }
 
         if (text == "🆕 Yangi buyurtma")
         {
-            _orders.RemoveUserState(chatId);
+            _orders.ClearPendingOrder(chatId);
             if (_users.Exists(chatId))
             {
                 await _bot.SendTextMessageAsync(chatId, "📍 Qayerdan ketmoqchisiz? (jo'nash manzilini kiriting)");
@@ -397,33 +397,37 @@ public class BotService
                     return;
                 }
 
-                var driverName = !string.IsNullOrEmpty(cb.From.Username)
-                    ? "@" + cb.From.Username
-                    : cb.From.FirstName ?? "Noma'lum";
-
-                var isFirstViewer = _orders.TryViewOrder(id,
+                var (result, isNewViewer) = _orders.TryViewOrder(id,
                     cb.From.Id,
                     cb.From.Username,
                     cb.From.FirstName);
 
-                if (isFirstViewer)
+                if (result == OrderManager.ViewResult.Ok)
                 {
+                    var driverName = !string.IsNullOrEmpty(cb.From.Username)
+                        ? "@" + cb.From.Username
+                        : cb.From.FirstName ?? "Noma'lum";
+
                     await _bot.AnswerCallbackQueryAsync(cb.Id,
                         $"👤 {order.UserName}\n📞 {order.Phone}\n📍 {order.PickupLocation} ➡ {order.DropoffLocation}\n👥 {order.PassengerCount} kishi",
                         showAlert: true);
+
+                    await _bot.SendTextMessageAsync(_viewerGroupId,
+                        $"👁 {driverName} buyurtmani ko'rdi\n" +
+                        $"🆔 #{order.Id.ToString()[..8]}\n" +
+                        $"📍 {order.PickupLocation} ➡ {order.DropoffLocation}");
+                }
+                else if (result == OrderManager.ViewResult.AlreadyViewedByYou)
+                {
+                    await _bot.AnswerCallbackQueryAsync(cb.Id,
+                        "Siz bu buyurtmani allaqachon ko'rgansiz", showAlert: true);
                 }
                 else
                 {
                     await _bot.AnswerCallbackQueryAsync(cb.Id,
-                        "Bu buyurtma ma'lumotlari allaqachon boshqa haydovchi tomonidan ko'rilgan",
+                        "Hozir boshqa haydovchi ko'rmoqda, birozdan so'ng urinib ko'ring",
                         showAlert: true);
                 }
-
-                await _bot.SendTextMessageAsync(_viewerGroupId,
-                    $"👁 {driverName} buyurtma ma'lumotlarini ko'rdi\n" +
-                    $"🆔 #{order.Id.ToString()[..8]}\n" +
-                    $"📍 {order.PickupLocation} ➡ {order.DropoffLocation}\n" +
-                    $"👥 {order.PassengerCount} kishi");
                 return;
             }
 

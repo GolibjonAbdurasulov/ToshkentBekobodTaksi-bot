@@ -60,25 +60,41 @@ public class OrderManager
         return false;
     }
 
-    public bool TryViewOrder(Guid id, long driverTelegramId, string? username, string? name)
+    public enum ViewResult { Ok, AlreadyViewedByYou, BlockedByAnother }
+
+    public (ViewResult result, bool isNewViewer) TryViewOrder(Guid id, long driverTelegramId, string? username, string? name)
     {
         if (_orders.TryGetValue(id, out var order) && order.Status == OrderStatus.Active)
         {
             lock (order)
             {
-                var isFirst = order.ViewedByDrivers.Count == 0;
+                var alreadyViewed = order.ViewedByDrivers.Any(v => v.TelegramId == driverTelegramId);
+                if (alreadyViewed)
+                    return (ViewResult.AlreadyViewedByYou, false);
+
+                var now = DateTime.UtcNow;
+                var lastViewer = order.ViewedByDrivers.LastOrDefault();
+                if (lastViewer != null && now - lastViewer.ViewedAt < TimeSpan.FromSeconds(15))
+                    return (ViewResult.BlockedByAnother, true);
+
                 order.ViewedByDrivers.Add(new DriverViewer
                 {
                     TelegramId = driverTelegramId,
                     Username = username,
                     Name = name,
-                    ViewedAt = DateTime.UtcNow
+                    ViewedAt = now
                 });
                 Save();
-                return isFirst;
+                return (ViewResult.Ok, true);
             }
         }
-        return false;
+        return (ViewResult.BlockedByAnother, false);
+    }
+    
+    public void ClearPendingOrder(long chatId)
+    {
+        _pendingOrders.TryRemove(chatId, out _);
+        _userStates.TryRemove(chatId, out _);
     }
 
     public List<Order> GetAllOrders() => _orders.Values.OrderByDescending(o => o.CreatedAt).ToList();
