@@ -60,7 +60,7 @@ public class OrderManager
         return false;
     }
 
-    public enum ViewResult { Ok, AlreadyViewedByYou, BlockedByAnother }
+    public enum ViewResult { Ok, BlockedByAnother }
 
     public (ViewResult result, bool isNewViewer) TryViewOrder(Guid id, long driverTelegramId, string? username, string? name)
     {
@@ -70,12 +70,12 @@ public class OrderManager
             {
                 var alreadyViewed = order.ViewedByDrivers.Any(v => v.TelegramId == driverTelegramId);
                 if (alreadyViewed)
-                    return (ViewResult.AlreadyViewedByYou, false);
+                    return (ViewResult.Ok, false);
 
                 var now = DateTime.UtcNow;
                 var lastViewer = order.ViewedByDrivers.LastOrDefault();
                 if (lastViewer != null && now - lastViewer.ViewedAt < TimeSpan.FromSeconds(15))
-                    return (ViewResult.BlockedByAnother, true);
+                    return (ViewResult.BlockedByAnother, false);
 
                 order.ViewedByDrivers.Add(new DriverViewer
                 {

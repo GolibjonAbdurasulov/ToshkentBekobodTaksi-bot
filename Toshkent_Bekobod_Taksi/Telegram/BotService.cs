@@ -404,23 +404,21 @@ public class BotService
 
                 if (result == OrderManager.ViewResult.Ok)
                 {
-                    var driverName = !string.IsNullOrEmpty(cb.From.Username)
-                        ? "@" + cb.From.Username
-                        : cb.From.FirstName ?? "Noma'lum";
-
                     await _bot.AnswerCallbackQueryAsync(cb.Id,
                         $"👤 {order.UserName}\n📞 {order.Phone}\n📍 {order.PickupLocation} ➡ {order.DropoffLocation}\n👥 {order.PassengerCount} kishi",
                         showAlert: true);
 
-                    await _bot.SendTextMessageAsync(_viewerGroupId,
-                        $"👁 {driverName} buyurtmani ko'rdi\n" +
-                        $"🆔 #{order.Id.ToString()[..8]}\n" +
-                        $"📍 {order.PickupLocation} ➡ {order.DropoffLocation}");
-                }
-                else if (result == OrderManager.ViewResult.AlreadyViewedByYou)
-                {
-                    await _bot.AnswerCallbackQueryAsync(cb.Id,
-                        "Siz bu buyurtmani allaqachon ko'rgansiz", showAlert: true);
+                    if (isNewViewer)
+                    {
+                        var driverName = !string.IsNullOrEmpty(cb.From.Username)
+                            ? "@" + cb.From.Username
+                            : cb.From.FirstName ?? "Noma'lum";
+
+                        await _bot.SendTextMessageAsync(_viewerGroupId,
+                            $"👁 {driverName} buyurtmani ko'rdi\n" +
+                            $"🆔 #{order.Id.ToString()[..8]}\n" +
+                            $"📍 {order.PickupLocation} ➡ {order.DropoffLocation}");
+                    }
                 }
                 else
                 {
