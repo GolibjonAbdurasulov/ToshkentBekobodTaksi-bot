@@ -468,12 +468,15 @@ public class BotService
 
                 await _bot.AnswerCallbackQueryAsync(cb.Id, "✅ Buyurtma qabul qilindi! Mijoz bilan bog'lanishingiz mumkin.");
 
+                var viewedBeforeAccept = order.ViewedByDrivers.Any(v => v.TelegramId == cb.From.Id);
+
                 await _bot.SendTextMessageAsync(_viewerGroupId,
                     $"✅ Buyurtma qabul qilindi\n" +
                     $"🆔 #{order.Id.ToString()[..8]}\n" +
                     $"🚗 Haydovchi: {driverName}\n" +
                     $"📍 {order.PickupLocation} ➡ {order.DropoffLocation}\n" +
-                    $"👥 {order.PassengerCount} kishi");
+                    $"👥 {order.PassengerCount} kishi" +
+                    (viewedBeforeAccept ? "" : "\n\n⚠️ Haydovchi ma'lumotlarni ko'rmasdan qabul qildi!"));
 
                 int viewerCount = order.ViewedByDrivers.Count;
                 foreach (var viewer in order.ViewedByDrivers)

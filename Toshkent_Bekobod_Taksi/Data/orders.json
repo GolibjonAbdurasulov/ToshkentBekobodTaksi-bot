@@ -89,6 +89,38 @@
     ]
   },
   {
+    "Id": "c198410b-404e-42a7-9b95-05f248f57c2c",
+    "UserChatId": 8272393758,
+    "UserName": "Test",
+    "UserTelegramUsername": "Killer1190",
+    "Phone": "19485428269",
+    "PickupLocation": "Jdjd",
+    "DropoffLocation": "Djdj",
+    "PassengerCount": 4,
+    "Status": 0,
+    "GroupMessageId": 21,
+    "GroupChatId": -1003951463880,
+    "CreatedAt": "2026-07-03T09:10:24.5003713Z",
+    "DriverTelegramId": null,
+    "DriverUsername": null,
+    "DriverName": null,
+    "AcceptedAt": null,
+    "ViewedByDrivers": [
+      {
+        "TelegramId": 5146085066,
+        "Username": "G_Abdurasulov",
+        "Name": "//G\u0027olibjon Abdurasulov",
+        "ViewedAt": "2026-07-03T09:10:35.9005113Z"
+      },
+      {
+        "TelegramId": 8786700230,
+        "Username": "Killer2200",
+        "Name": "Killer. \uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B\uD809\uDC2B",
+        "ViewedAt": "2026-07-03T09:11:05.2136264Z"
+      }
+    ]
+  },
+  {
     "Id": "8fc41abd-b301-437d-a97a-b99512a2613e",
     "UserChatId": 5146085066,
     "UserName": "G\u0027olibjon",
@@ -105,25 +137,6 @@
     "DriverUsername": "G_Abdurasulov",
     "DriverName": "//G\u0027olibjon Abdurasulov",
     "AcceptedAt": "2026-06-03T06:58:12.6269319Z",
-    "ViewedByDrivers": []
-  },
-  {
-    "Id": "8c0ffdcb-c933-4c37-adeb-592a20544198",
-    "UserChatId": 8272393758,
-    "UserName": "Test",
-    "UserTelegramUsername": null,
-    "Phone": "19485428269",
-    "PickupLocation": "Toshkent",
-    "DropoffLocation": "Bekobod",
-    "PassengerCount": 1,
-    "Status": 1,
-    "GroupMessageId": 12,
-    "GroupChatId": -1003951463880,
-    "CreatedAt": "2026-06-03T08:00:17.4652031Z",
-    "DriverTelegramId": 5146085066,
-    "DriverUsername": "G_Abdurasulov",
-    "DriverName": "//G\u0027olibjon Abdurasulov",
-    "AcceptedAt": "2026-06-03T08:00:54.0494234Z",
     "ViewedByDrivers": []
   },
   {
@@ -153,6 +166,25 @@
     ]
   },
   {
+    "Id": "8c0ffdcb-c933-4c37-adeb-592a20544198",
+    "UserChatId": 8272393758,
+    "UserName": "Test",
+    "UserTelegramUsername": null,
+    "Phone": "19485428269",
+    "PickupLocation": "Toshkent",
+    "DropoffLocation": "Bekobod",
+    "PassengerCount": 1,
+    "Status": 1,
+    "GroupMessageId": 12,
+    "GroupChatId": -1003951463880,
+    "CreatedAt": "2026-06-03T08:00:17.4652031Z",
+    "DriverTelegramId": 5146085066,
+    "DriverUsername": "G_Abdurasulov",
+    "DriverName": "//G\u0027olibjon Abdurasulov",
+    "AcceptedAt": "2026-06-03T08:00:54.0494234Z",
+    "ViewedByDrivers": []
+  },
+  {
     "Id": "e17139aa-05f6-4167-afd3-7ef7c01074ce",
     "UserChatId": 8272393758,
     "UserName": "Test",
@@ -169,6 +201,13 @@
     "DriverUsername": null,
     "DriverName": null,
     "AcceptedAt": null,
-    "ViewedByDrivers": []
+    "ViewedByDrivers": [
+      {
+        "TelegramId": 5146085066,
+        "Username": "G_Abdurasulov",
+        "Name": "//G\u0027olibjon Abdurasulov",
+        "ViewedAt": "2026-07-03T09:10:21.7577221Z"
+      }
+    ]
   }
 ]
