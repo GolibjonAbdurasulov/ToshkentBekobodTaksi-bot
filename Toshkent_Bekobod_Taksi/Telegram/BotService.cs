@@ -271,11 +271,25 @@ public class BotService
                 foreach (var o in activeOrders)
                 {
                     var status = o.Status == OrderStatus.Accepted ? "✅ Haydovchi topildi" : "⏳ Haydovchi kutilmoqda";
-                    await _bot.SendTextMessageAsync(chatId,
-                        $"#{o.Id.ToString()[..8]}\n" +
-                        $"📍 {o.PickupLocation} ➡ {o.DropoffLocation}\n" +
-                        $"👤 {o.PassengerCount} kishi\n" +
-                        $"📌 {status}");
+                    var isAccepted = o.Status == OrderStatus.Accepted;
+
+                    var msgText = $"#{o.Id.ToString()[..8]}\n" +
+                                  $"📍 {o.PickupLocation} ➡ {o.DropoffLocation}\n" +
+                                  $"👤 {o.PassengerCount} kishi\n" +
+                                  $"📌 {status}";
+
+                    if (isAccepted)
+                    {
+                        var keyboard = new InlineKeyboardMarkup(new[]
+                        {
+                            new[] { InlineKeyboardButton.WithCallbackData("📢 Shikoyat qilish", $"report_{o.Id}") }
+                        });
+                        await _bot.SendTextMessageAsync(chatId, msgText, replyMarkup: keyboard);
+                    }
+                    else
+                    {
+                        await _bot.SendTextMessageAsync(chatId, msgText);
+                    }
                 }
             }
             return;
@@ -491,6 +505,38 @@ public class BotService
                 if (viewerCount == 0)
                     await _bot.SendTextMessageAsync(_viewerGroupId, "  (hech kim ko'rmagan)");
 
+                return;
+            }
+
+            if (data.StartsWith("report_"))
+            {
+                var id = Guid.Parse(data["report_".Length..]);
+                var order = _orders.GetOrder(id);
+                if (order == null)
+                {
+                    await _bot.AnswerCallbackQueryAsync(cb.Id, "Buyurtma topilmadi");
+                    return;
+                }
+
+                var driverName = !string.IsNullOrEmpty(order.DriverUsername)
+                    ? "@" + order.DriverUsername
+                    : order.DriverName ?? "Noma'lum";
+
+                await _bot.SendTextMessageAsync(_adminId,
+                    $"📢 SHIKOYAT\n" +
+                    $"─────────────────\n" +
+                    $"🆔 #{order.Id.ToString()[..8]}\n" +
+                    $"👤 Mijoz: {order.UserName}\n" +
+                    $"📞 {order.Phone}\n" +
+                    $"📍 {order.PickupLocation} ➡ {order.DropoffLocation}\n" +
+                    $"👥 {order.PassengerCount} kishi\n" +
+                    $"🚗 Qabul qilgan: {driverName}\n" +
+                    $"🕐 Buyurtma: {order.CreatedAt:HH:mm}\n" +
+                    $"🕐 Qabul: {order.AcceptedAt:HH:mm}\n" +
+                    $"─────────────────\n" +
+                    $"Mijoz boshqa haydovchi kelganini xabar qilmoqda.");
+
+                await _bot.AnswerCallbackQueryAsync(cb.Id, "✅ Shikoyatingiz adminga yuborildi.", showAlert: true);
                 return;
             }
 
