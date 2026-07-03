@@ -351,17 +351,9 @@ public class BotService
 
     private async Task SendOrderToGroup(Order order)
     {
-        var contactLine = $"👤 {order.UserName}";
-        if (!string.IsNullOrEmpty(order.UserTelegramUsername))
-            contactLine += $" | 💬 @{order.UserTelegramUsername}";
-        else
-            contactLine += $" | 🔗 tg://user?id={order.UserChatId}";
-
         var msg = await _bot.SendTextMessageAsync(_groupId,
             $"🚖 YANGI BUYURTMA\n" +
             $"─────────────────\n" +
-            $"{contactLine}\n" +
-            $"📞 {order.Phone}\n" +
             $"📍 {order.PickupLocation} ➡️ {order.DropoffLocation}\n" +
             $"👥 {order.PassengerCount} kishi\n" +
             $"🕐 {order.CreatedAt:HH:mm}\n" +
